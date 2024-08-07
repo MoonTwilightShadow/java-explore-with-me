@@ -69,12 +69,6 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-
-        <dependency>
-            <groupId>org.jeasy</groupId>
-            <artifactId>easy-random-core</artifactId>
-            <version>5.0.0</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -87,17 +81,6 @@
                 </configuration>
             </plugin>
 
-
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <additionalClasspathElements>
-                        <additionalClasspathElement>${basedir}/src/test/resources</additionalClasspathElement>
-                    </additionalClasspathElements>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
