@@ -13,6 +13,7 @@ public class ExceptionHandlerContoller {
     public ErrorResponse validationHandle(final MethodArgumentNotValidException e) {
         return new ErrorResponse(e.getMessage());
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse availableHandle(final IllegalArgumentException e) {

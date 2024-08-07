@@ -11,14 +11,13 @@ import ru.practicum.utils.StatsMapper;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 @Slf4j
-public class StatsServiceImpl implements StatsService{
+public class StatsServiceImpl implements StatsService {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final StatsRepository repository;

@@ -47,7 +47,8 @@ public class StatsWebClient implements StatsClient {
                 .uri(uri.toString())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<ViewStats>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<ViewStats>>() {
+                })
                 .block();
     }
 }

@@ -7,7 +7,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.EndpointHit;
 import ru.practicum.ViewStats;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
