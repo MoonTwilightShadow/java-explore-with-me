@@ -12,13 +12,14 @@ import ru.practicum.utils.StatsMapper;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 @Slf4j
 public class StatsServiceImpl implements StatsService {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final StatsRepository repository;
 
@@ -32,8 +33,8 @@ public class StatsServiceImpl implements StatsService {
     public List<ViewStats> getStats(String startString, String endString, List<String> uris, Boolean unique) {
         log.info("getStats method service");
 
-        LocalDateTime start = LocalDateTime.parse(startString, formatter);
-        LocalDateTime end = LocalDateTime.parse(endString, formatter);
+        LocalDateTime start = LocalDateTime.parse(startString, DATE_TIME_FORMATTER);
+        LocalDateTime end = LocalDateTime.parse(endString, DATE_TIME_FORMATTER);
 
         if (end.isBefore(start)) {
             throw new IllegalArgumentException("start parameter should be before end");
@@ -41,7 +42,7 @@ public class StatsServiceImpl implements StatsService {
 
         List<StatView> stats;
 
-        if (uris == null) {
+        if (Objects.isNull(uris)) {
             if (unique) {
                 stats = repository.findAllByTimestampBetweenUniqueIp(start, end);
             } else {

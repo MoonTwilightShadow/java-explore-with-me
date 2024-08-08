@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class StatsMapper {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static ViewStats mapToResponse(StatView view) {
         return new ViewStats(
@@ -24,7 +24,7 @@ public class StatsMapper {
                 hit.getApp(),
                 hit.getUri(),
                 hit.getIp(),
-                LocalDateTime.parse(hit.getTimestamp(), formatter)
+                LocalDateTime.parse(hit.getTimestamp(), DATE_TIME_FORMATTER)
         );
     }
 }
