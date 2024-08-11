@@ -1,6 +1,7 @@
 package ru.practicum;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -8,12 +9,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
-@Component
 @Slf4j
+@Component
 public class StatsWebClient implements StatsClient {
     private final WebClient webClient;
 
-    public StatsWebClient(String uri) {
+    public StatsWebClient(@Value("${stat.server.url}") String uri) {
         this.webClient = WebClient.create(uri);
     }
 
