@@ -41,6 +41,7 @@ create table if not exists events (
     lon                float,
     initiator_id       integer not null,
     category_id        integer not null,
+    views              integer,
 
     constraint pk_event primary key (id),
     constraint fk_event_user

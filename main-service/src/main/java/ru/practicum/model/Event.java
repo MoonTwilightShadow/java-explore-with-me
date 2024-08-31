@@ -29,6 +29,8 @@ public class Event {
     private Boolean paid;
     @Column(name = "participant_limit")
     private Integer participentLimit;
+    @Column(name = "request_moderation")
+    private Boolean moderation;
     @Enumerated(EnumType.STRING)
     private State state;
     private Double lat;
@@ -37,4 +39,29 @@ public class Event {
     private Category category;
     @ManyToOne(fetch = FetchType.LAZY)
     private User initiator;
+    private Integer views;
+
+    public Event(
+            String title,
+            String annotation,
+            String description,
+            LocalDateTime eventDate,
+            Boolean paid,
+            Integer participentLimit,
+            Boolean requestModeration,
+            Double lat,
+            Double lon) {
+        this.title = title;
+        this.annotation = annotation;
+        this.description = description;
+        this.eventDate = eventDate;
+        this.createdOn = LocalDateTime.now();
+        this.paid = paid;
+        this.participentLimit = participentLimit;
+        this.moderation = requestModeration;
+        this.state = State.PENDING;
+        this.lat = lat;
+        this.lon = lon;
+        this.views = 0;
+    }
 }
