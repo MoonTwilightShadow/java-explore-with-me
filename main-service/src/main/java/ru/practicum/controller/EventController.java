@@ -1,5 +1,7 @@
 package ru.practicum.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,8 +13,6 @@ import ru.practicum.dto.UpdateEventRequest;
 import ru.practicum.model.enums.State;
 import ru.practicum.service.EventService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -43,6 +43,7 @@ public class EventController {
 
     @GetMapping("/events/{id}")
     public EventFullDTO getEvent(@PathVariable(value = "id") Integer id, HttpServletRequest request) {
+        log.info("Get event with id={}. Ip={}, URI={}", id, request.getRemoteAddr(), request.getRequestURI());
         return eventService.getEvent(id, request.getRemoteAddr());
     }
 
@@ -52,6 +53,7 @@ public class EventController {
             @PathVariable(value = "userId") Integer userId,
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size) {
+        log.info("Get events with owner id={} from={} size={}", userId, from, size);
         return eventService.getUserEvents(userId, from, size);
     }
 
@@ -60,6 +62,7 @@ public class EventController {
     public EventFullDTO createEvent(
             @Valid @RequestBody NewEventDTO newEvent,
             @PathVariable(value = "userId") Integer userId) {
+        log.info("Post event with owner id={}, event={}", userId, newEvent);
         return eventService.createEvent(newEvent, userId);
     }
 
@@ -68,6 +71,7 @@ public class EventController {
             @PathVariable(value = "userId") Integer userId,
             @PathVariable(value = "eventId") Integer eventId
     ) {
+        log.info("Get event with id={} and user with id={}", eventId, userId);
         return eventService.getUserEvent(userId, eventId);
     }
 
@@ -76,6 +80,7 @@ public class EventController {
             @PathVariable(value = "userId") Integer userId,
             @PathVariable(value = "eventId") Integer eventId,
             @Valid @RequestBody UpdateEventRequest updateEventRequest) {
+        log.info("Patch event with id={} and user id={}, event={}", eventId, userId, updateEventRequest);
         return eventService.updateUserEvent(userId, eventId, updateEventRequest);
     }
 

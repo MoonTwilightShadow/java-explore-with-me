@@ -1,17 +1,15 @@
 package ru.practicum.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
-
-import javax.persistence.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "event_compilation")
+@Table(name = "event_compilations")
 public class EventCompilation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

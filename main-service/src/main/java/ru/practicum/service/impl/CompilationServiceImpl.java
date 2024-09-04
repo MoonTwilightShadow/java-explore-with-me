@@ -86,6 +86,10 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public CompilationDTO createCompilation(NewCompilationDTO newCompilation) {
+        if (Objects.isNull(newCompilation.getPinned())) {
+            newCompilation.setPinned(false);
+        }
+
         Compilation compilation = compilationRepository.save(CompilationsMapper.mapFromDTO(newCompilation));
         List<Event> events = new ArrayList<>();
 

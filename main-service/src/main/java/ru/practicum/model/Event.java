@@ -1,11 +1,11 @@
 package ru.practicum.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.model.enums.State;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data

@@ -1,9 +1,9 @@
 package ru.practicum.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import ru.practicum.model.enums.State;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter

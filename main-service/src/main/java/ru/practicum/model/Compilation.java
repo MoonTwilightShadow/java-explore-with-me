@@ -1,16 +1,13 @@
 package ru.practicum.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import javax.persistence.*;
 
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "compilation")
+@Table(name = "compilations")
 public class Compilation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

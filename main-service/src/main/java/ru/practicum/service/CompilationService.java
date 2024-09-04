@@ -1,12 +1,9 @@
 package ru.practicum.service;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.CompilationDTO;
 import ru.practicum.dto.NewCompilationDTO;
 import ru.practicum.dto.UpdateCompilationDTO;
 
-import javax.validation.Valid;
 import java.util.List;
 
 public interface CompilationService {

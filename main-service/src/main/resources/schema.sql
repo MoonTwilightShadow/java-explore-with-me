@@ -3,7 +3,7 @@ drop table if exists users, categories, compilation, events, event_compilations,
 create table if not exists users (
     id      integer generated always as identity not null,
     name    varchar(128) not null,
-    email   varchar(128) not null,
+    email   varchar(254) not null,
 
     constraint pk_user primary key (id),
     constraint uq_user_email unique (email)

@@ -25,9 +25,10 @@ public class UserServiceImpl implements UserService {
     public List<UserDTO> getUsers(List<Integer> ids, Integer from, Integer size) {
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
 
-        return Objects.isNull(ids) ? new ArrayList<>() : userRepository.findUserByIdIn(ids, page).stream()
-                .map(UserMapper::mapToDTO)
-                .collect(Collectors.toList());
+        if (Objects.isNull(ids)) {
+            return userRepository.findAll(page).map(UserMapper::mapToDTO).getContent();
+        }
+        return userRepository.findUserByIdIn(ids, page).map(UserMapper::mapToDTO).getContent();
     }
 
     @Override
