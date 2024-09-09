@@ -18,7 +18,7 @@ public class Request {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @ManyToOne(fetch = FetchType.LAZY)
-    private User requestor;
+    private User requester;
     @ManyToOne(fetch = FetchType.LAZY)
     private Event event;
     private LocalDateTime created;

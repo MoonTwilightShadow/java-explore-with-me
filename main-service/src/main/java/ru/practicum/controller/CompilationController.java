@@ -37,6 +37,7 @@ public class CompilationController {
 
     //Admin Endpoints
     @PostMapping("/admin/compilations")
+    @ResponseStatus(HttpStatus.CREATED)
     public CompilationDTO createCompilation(@Valid @RequestBody NewCompilationDTO newCompilation) {
         log.info("Post compilation={}", newCompilation);
         return compilationService.createCompilation(newCompilation);

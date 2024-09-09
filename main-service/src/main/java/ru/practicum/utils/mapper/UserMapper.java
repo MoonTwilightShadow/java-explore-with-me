@@ -13,15 +13,15 @@ public class UserMapper {
     public static UserDTO mapToDTO(User user) {
         return new UserDTO(
                 user.getId(),
-                user.getName(),
-                user.getEmail()
+                user.getEmail(),
+                user.getName()
         );
     }
 
     public static User mapFromDTO(NewUserRequest newUser) {
         return new User(
-                newUser.getEmail(),
-                newUser.getName()
+                newUser.getName(),
+                newUser.getEmail()
         );
     }
 }

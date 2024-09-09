@@ -2,7 +2,7 @@ drop table if exists users, categories, compilation, events, event_compilations,
 
 create table if not exists users (
     id      integer generated always as identity not null,
-    name    varchar(128) not null,
+    name    varchar(250) not null,
     email   varchar(254) not null,
 
     constraint pk_user primary key (id),
@@ -11,7 +11,7 @@ create table if not exists users (
 
 create table if not exists categories (
     id   integer generated always as identity not null,
-    name varchar(128) not null,
+    name varchar(50) not null,
 
     constraint pk_category primary key (id),
     constraint uq_category_name unique (name)
@@ -19,7 +19,7 @@ create table if not exists categories (
 
 create table if not exists compilations (
     id     integer generated always as identity not null,
-    title  varchar(128) not null,
+    title  varchar(50) not null,
     pinned boolean,
 
     constraint pk_compilation primary key (id)

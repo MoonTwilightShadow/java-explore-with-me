@@ -1,6 +1,5 @@
 package ru.practicum.service;
 
-import org.springframework.data.crossstore.ChangeSetPersister;
 import ru.practicum.dto.CategoryDTO;
 import ru.practicum.dto.NewCategoryDTO;
 

@@ -1,20 +1,18 @@
 package ru.practicum.service.impl;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.NewUserRequest;
 import ru.practicum.dto.UserDTO;
 import ru.practicum.exception.exceptions.NotFoundException;
+import ru.practicum.model.User;
 import ru.practicum.repository.UserRepository;
 import ru.practicum.service.UserService;
 import ru.practicum.utils.mapper.UserMapper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -33,7 +31,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO createUser(NewUserRequest newUser) {
-        return UserMapper.mapToDTO(userRepository.save(UserMapper.mapFromDTO(newUser)));
+        User user = UserMapper.mapFromDTO(newUser);
+        user = userRepository.save(user);
+        return UserMapper.mapToDTO(user);
     }
 
     @Override

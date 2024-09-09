@@ -4,12 +4,10 @@ import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-@ToString
 public class EventRequestStatusUpdateResult {
     private List<ParticipationRequestDTO> confirmedRequests;
     private List<ParticipationRequestDTO> rejectedRequests;

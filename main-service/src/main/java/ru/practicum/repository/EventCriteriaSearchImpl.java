@@ -5,6 +5,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.practicum.model.Event;
 import ru.practicum.model.enums.State;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Repository
+@AllArgsConstructor
 public class EventCriteriaSearchImpl implements EventCriteriaSearch {
     private EntityManager entityManager;
 

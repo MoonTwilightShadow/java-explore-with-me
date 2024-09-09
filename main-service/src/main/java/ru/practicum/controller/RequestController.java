@@ -27,7 +27,7 @@ public class RequestController {
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}/requests")
-    public List<EventRequestStatusUpdateResult> updateStateOfRequests(@PathVariable Integer userId,
+    public EventRequestStatusUpdateResult updateStateOfRequests(@PathVariable Integer userId,
                                                                       @PathVariable Integer eventId,
                                                                       @Valid @RequestBody EventRequestStatusUpdateRequest statusUpdate) {
         log.info("Update event request status for event with id={} and user with id={} request={}", userId, eventId, statusUpdate);

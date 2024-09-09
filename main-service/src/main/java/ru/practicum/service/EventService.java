@@ -1,7 +1,6 @@
 package ru.practicum.service;
 
 
-import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.dto.EventFullDTO;
 import ru.practicum.dto.EventShortDTO;
 import ru.practicum.dto.NewEventDTO;

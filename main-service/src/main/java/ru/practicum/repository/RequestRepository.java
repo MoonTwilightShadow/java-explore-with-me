@@ -5,14 +5,18 @@ import ru.practicum.model.Request;
 import ru.practicum.model.enums.State;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RequestRepository extends JpaRepository<Request, Integer> {
-    List<Request> findAllByEventIdInAndStatus(List<Integer> ids, State status);
-
-    List<Request> findAllByEventIdAndStatus(Integer id, State status);
-
-    List<Request> findAllByEventIdIn(List<Integer> ids);
-
     Integer countAllByEventId(Integer id);
-    List<Request> findAllByRequestorId(Integer id);
+
+    Integer countAllByEventIdAndStatus(Integer id, State state);
+
+    List<Request> findAllByRequesterId(Integer id);
+
+    Optional<Request> findRequestByRequesterIdAndEventId(Integer userId, Integer eventId);
+
+    List<Request> findRequestByEventIdAndEventInitiatorId(Integer eventId, Integer userId);
+
+    List<Request> findAllByIdIn(List<Integer> ids);
 }

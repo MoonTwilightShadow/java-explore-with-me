@@ -5,10 +5,7 @@ import ru.practicum.dto.EventShortDTO;
 import ru.practicum.dto.Location;
 import ru.practicum.dto.NewEventDTO;
 import ru.practicum.model.Event;
-import ru.practicum.model.enums.State;
 import ru.practicum.utils.Constants;
-
-import java.time.LocalDateTime;
 
 public class EventMapper {
     public static EventShortDTO mapToShort(Event event, Integer confirmedRequests) {
@@ -53,7 +50,7 @@ public class EventMapper {
                 newEvent.getDescription(),
                 newEvent.getEventDate(),
                 newEvent.getPaid(),
-                newEvent.getParticipentLimit(),
+                newEvent.getParticipantLimit(),
                 newEvent.getRequestModeration(),
                 newEvent.getLocation().getLat(),
                 newEvent.getLocation().getLon()

@@ -36,7 +36,8 @@ public class UserController {
 
     @DeleteMapping("/admin/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@RequestParam(name = "userId") Integer userId) {
+    public void deleteUser(@PathVariable Integer userId) {
+        log.info("Delete userId={} by admin", userId);
         userService.deleteUser(userId);
     }
 }

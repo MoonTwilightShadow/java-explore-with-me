@@ -60,8 +60,8 @@ public class EventController {
     @PostMapping("/users/{userId}/events")
     @ResponseStatus(code = HttpStatus.CREATED)
     public EventFullDTO createEvent(
-            @Valid @RequestBody NewEventDTO newEvent,
-            @PathVariable(value = "userId") Integer userId) {
+            @RequestBody @Valid NewEventDTO newEvent,
+            @PathVariable Integer userId) {
         log.info("Post event with owner id={}, event={}", userId, newEvent);
         return eventService.createEvent(newEvent, userId);
     }
@@ -77,8 +77,8 @@ public class EventController {
 
     @PatchMapping("/users/{userId}/events/{eventId}")
     private EventFullDTO updateUserEvent(
-            @PathVariable(value = "userId") Integer userId,
-            @PathVariable(value = "eventId") Integer eventId,
+            @PathVariable Integer userId,
+            @PathVariable Integer eventId,
             @Valid @RequestBody UpdateEventRequest updateEventRequest) {
         log.info("Patch event with id={} and user id={}, event={}", eventId, userId, updateEventRequest);
         return eventService.updateUserEvent(userId, eventId, updateEventRequest);

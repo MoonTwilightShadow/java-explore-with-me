@@ -5,9 +5,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.CategoryDTO;
 import ru.practicum.dto.NewCategoryDTO;
+import ru.practicum.exception.exceptions.ConflictException;
 import ru.practicum.exception.exceptions.NotFoundException;
 import ru.practicum.model.Category;
 import ru.practicum.repository.CategoryRepository;
+import ru.practicum.repository.EventRepository;
 import ru.practicum.service.CategoryService;
 import ru.practicum.utils.mapper.CategoryMapper;
 
@@ -17,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
+    private final EventRepository eventRepository;
 
     @Override
     public List<CategoryDTO> getCategories(Integer from, Integer size) {
@@ -44,6 +47,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategory(Integer id) {
+        if (eventRepository.findFirstByCategoryId(id).isPresent()) {
+            throw new ConflictException("Events are associated with this category");
+        }
+
         categoryRepository.deleteById(id);
     }
 

@@ -1,7 +1,6 @@
 package ru.practicum.service.impl;
 
 import lombok.AllArgsConstructor;
-import org.hibernate.StaleStateException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.StatsClient;
@@ -9,9 +8,8 @@ import ru.practicum.dto.EventFullDTO;
 import ru.practicum.dto.EventShortDTO;
 import ru.practicum.dto.NewEventDTO;
 import ru.practicum.dto.UpdateEventRequest;
+import ru.practicum.exception.exceptions.ConflictException;
 import ru.practicum.exception.exceptions.NotFoundException;
-import ru.practicum.exception.exceptions.ParticipentsLimitExceedException;
-import ru.practicum.exception.exceptions.StateException;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
 import ru.practicum.model.User;
@@ -28,11 +26,9 @@ import ru.practicum.utils.mapper.EventMapper;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 @Service
 @AllArgsConstructor
@@ -66,35 +62,17 @@ public class EventServiceImpl implements EventService {
             }
         }
 
-        List<Event> events = eventRepository.getEvents(text, categories, paid, start, end, from, size);
+        List<EventShortDTO> events = eventRepository.getEvents(text, categories, paid, start, end, from, size).stream()
+                .filter(event -> Objects.isNull(onlyAvailable) || !onlyAvailable ||
+                        (event.getParticipentLimit() >= requestRepository.countAllByEventId(event.getId()) ||
+                                event.getParticipentLimit() == Constants.DEFAULT_PARTICIPANT_LIMIT))
+                .map(event -> EventMapper.mapToShort(event, requestRepository.countAllByEventId(event.getId())))
+                .toList();
 
-        Map<Integer, Integer> eventRequests = requestRepository.findAllByEventIdInAndStatus(
-                        events.stream().map(Event::getId).collect(toList()), State.CONFIRMED)
-                .stream()
-                .collect(Collectors.groupingBy(
-                        r -> r.getEvent().getId(),
-                        summingInt(e -> 1)
-                ));
-
-        if (Objects.nonNull(onlyAvailable) && onlyAvailable) {
-            events = events.stream()
-                    .filter(e -> (e.getParticipentLimit() >= eventRequests.get(e.getId()) ||
-                            e.getParticipentLimit() == Constants.DEFAULT_PARTICIPANT_LIMIT))
-                    .collect(toList());
-        }
-
-        List<EventShortDTO> eventShorts = events.stream().map(event -> {
-                    return EventMapper.mapToShort(
-                            event,
-                            eventRequests.getOrDefault(event.getId(), 0)
-                    );
-                })
-                .collect(toList());
-
-        if (sort.equals("EVENT_DATE")) {
-            return eventShorts.stream().sorted(Comparator.comparing(EventShortDTO::getEventDate)).collect(toList());
+        if (Objects.nonNull(sort) && sort.equals("EVENT_DATE")) {
+            return events.stream().sorted(Comparator.comparing(EventShortDTO::getEventDate)).collect(toList());
         } else {
-            return eventShorts.stream().sorted(Comparator.comparing(EventShortDTO::getViews)).collect(toList());
+            return events.stream().sorted(Comparator.comparing(EventShortDTO::getViews)).collect(toList());
         }
     }
 
@@ -107,7 +85,6 @@ public class EventServiceImpl implements EventService {
             throw new NotFoundException(String.format("Event with id={} was not published", id));
 
         event.setViews(event.getViews() + 1);
-        eventRepository.save(event);
         statsClient.saveHit("ewm-main-service", "/events/" + id, ip, LocalDateTime.now().format(Constants.DATE_TIME_FORMATTER));
 
         return EventMapper.mapToFull(event, requestRepository.countAllByEventId(id));
@@ -120,23 +97,8 @@ public class EventServiceImpl implements EventService {
 
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
 
-        List<Event> events = eventRepository.findAllByInitiatorId(userId, page);
-
-        Map<Integer, Integer> eventRequests = requestRepository.findAllByEventIdIn(
-                        events.stream().map(Event::getId).collect(toList()))
-                .stream()
-                .collect(Collectors.groupingBy(
-                        r -> r.getEvent().getId(),
-                        summingInt(e -> 1)
-                ));
-
         return eventRepository.findAllByInitiatorId(userId, page).stream()
-                .map(event -> {
-                    return EventMapper.mapToShort(
-                            event,
-                            eventRequests.getOrDefault(event.getId(), 0)
-                    );
-                })
+                .map(event -> EventMapper.mapToShort(event, requestRepository.countAllByEventId(event.getId())))
                 .collect(toList());
     }
 
@@ -145,12 +107,22 @@ public class EventServiceImpl implements EventService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("User with id={} was not found", userId)));
 
-        Category category = categoryRepository.findById(newEvent.getCategoryId())
-                .orElseThrow(() -> new NotFoundException(String.format("Category with id={} was not found", newEvent.getCategoryId())));
+        Category category = categoryRepository.findById(newEvent.getCategory())
+                .orElseThrow(() -> new NotFoundException(String.format("Category with id={} was not found", newEvent.getCategory())));
 
         Event event = EventMapper.mapToEvent(newEvent);
         event.setInitiator(user);
         event.setCategory(category);
+
+        if (Objects.isNull(newEvent.getPaid())) {
+            event.setPaid(Constants.DEFAULT_PAID);
+        }
+        if (Objects.isNull(newEvent.getParticipantLimit())) {
+            event.setParticipentLimit(Constants.DEFAULT_PARTICIPANT_LIMIT);
+        }
+        if (Objects.isNull(newEvent.getRequestModeration())) {
+            event.setModeration(Constants.DEFAULT_REQUEST_MODERATION);
+        }
 
         return EventMapper.mapToFull(eventRepository.save(event), 0);
     }
@@ -173,6 +145,10 @@ public class EventServiceImpl implements EventService {
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException(String.format("Event with id={} was not found", eventId)));
+
+        if (event.getState().equals(State.PUBLISHED)) {
+            throw new ConflictException("This event has already been published");
+        }
 
         event = updateFields(event, update);
 
@@ -231,14 +207,14 @@ public class EventServiceImpl implements EventService {
         if (Objects.nonNull(update.getStateAction())) {
             if (update.getStateAction().equals(StateAction.PUBLISH_EVENT)) {
                 if (!event.getState().equals(State.PENDING)) {
-                    throw new StaleStateException(String.format("Cannot publish the event because it's not in the right state: %s", event.getState()));
+                    throw new ConflictException(String.format("Cannot publish the event because it's not in the right state: %s", event.getState()));
                 } else {
                     event.setState(State.PUBLISHED);
                     event.setPublishedOn(LocalDateTime.now());
                 }
             } else if (update.getStateAction().equals(StateAction.REJECT_EVENT)) {
                 if (event.getState().equals(State.PUBLISHED)) {
-                    throw new StateException(String.format("Cannot reject the event because it's not in the right state: %s", event.getState()));
+                    throw new ConflictException(String.format("Cannot reject the event because it's not in the right state: %s", event.getState()));
                 } else {
                     event.setState(State.CANCELED);
                 }
@@ -259,11 +235,11 @@ public class EventServiceImpl implements EventService {
             event.setCategory(category);
         }
 
-        if (Objects.nonNull(update.getParticipantLimit())) {
+        if (Objects.nonNull(update.getParticipantLimit()) && update.getParticipantLimit() >= 0) {
             Integer participent = requestRepository.countAllByEventId(event.getId());
 
             if (participent > update.getParticipantLimit()) {
-                throw new ParticipentsLimitExceedException("There are more participants than the new limit");
+                throw new ConflictException("There are more participants than the new limit");
             }
 
             event.setParticipentLimit(update.getParticipantLimit());

@@ -92,14 +92,15 @@ public class CompilationServiceImpl implements CompilationService {
 
         Compilation compilation = compilationRepository.save(CompilationsMapper.mapFromDTO(newCompilation));
         List<Event> events = new ArrayList<>();
+        if (Objects.nonNull(newCompilation.getEvents())) {
+            for (Integer eventId : newCompilation.getEvents()) {
+                Event event = eventRepository.findById(eventId)
+                        .orElseThrow(() -> new NotFoundException(String.format("Event with id={} was not published", eventId)));
 
-        for (Integer eventId : newCompilation.getEvents()) {
-            Event event = eventRepository.findById(eventId)
-                    .orElseThrow(() -> new NotFoundException(String.format("Event with id={} was not published", eventId)));
+                eventCompilationRepository.save(new EventCompilation(compilation, event));
 
-            eventCompilationRepository.save(new EventCompilation(compilation, event));
-
-            events.add(event);
+                events.add(event);
+            }
         }
 
         CompilationDTO compilationDTO = CompilationsMapper.mapToDTO(compilation);
@@ -113,7 +114,8 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public CompilationDTO updateCompilation(Integer compId, UpdateCompilationDTO updateCompilation) {
         Compilation compilation = compilationRepository.findById(compId)
-                .orElseThrow(() -> new NotFoundException(String.format("Compilation with id={} was not found", compId)));;
+                .orElseThrow(() -> new NotFoundException(String.format("Compilation with id={} was not found", compId)));
+        ;
 
         if (Objects.nonNull(updateCompilation.getTitle())) {
             compilation.setTitle(updateCompilation.getTitle());
