@@ -228,7 +228,7 @@ public class EventServiceImpl implements EventService {
 
     private Event updateFields(Event event, UpdateEventRequest update) {
         Integer newCat = update.getCategory();
-        if (Objects.nonNull(newCat) && newCat != event.getCategory().getId()) {
+        if (Objects.nonNull(newCat) && event.getCategory().getId().equals(newCat)) {
             Category category = categoryRepository.findById(newCat)
                     .orElseThrow(() -> new NotFoundException(String.format("Category with id={} was not found", newCat)));
 

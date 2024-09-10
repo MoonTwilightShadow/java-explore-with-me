@@ -134,7 +134,7 @@ public class RequestServiceImpl implements RequestService {
             throw new ConflictException("The required event not published");
         }
 
-        if (event.getInitiator().getId() == userId) {
+        if (event.getInitiator().getId().equals(userId)) {
             throw new ConflictException("The required event not published");
         }
 
@@ -157,7 +157,7 @@ public class RequestServiceImpl implements RequestService {
                 .orElseThrow(() -> new NotFoundException(String.format("Request with id={} was not found", requestId)));
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException(String.format("User with id={} was not found", userId)));
 
-        if (userId != request.getRequester().getId()) {
+        if (!userId.equals(request.getRequester().getId())) {
             throw new IllegalArgumentException("This request was sent by another user");
         }
 
