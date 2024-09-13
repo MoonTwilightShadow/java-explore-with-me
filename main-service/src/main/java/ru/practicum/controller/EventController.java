@@ -67,7 +67,7 @@ public class EventController {
     }
 
     @GetMapping("/users/{userId}/events/{eventId}")
-    private EventFullDTO getUserEvent(
+    public EventFullDTO getUserEvent(
             @PathVariable(value = "userId") Integer userId,
             @PathVariable(value = "eventId") Integer eventId
     ) {
@@ -76,12 +76,29 @@ public class EventController {
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}")
-    private EventFullDTO updateUserEvent(
+    public EventFullDTO updateUserEvent(
             @PathVariable Integer userId,
             @PathVariable Integer eventId,
             @Valid @RequestBody UpdateEventRequest updateEventRequest) {
         log.info("Patch event with id={} and user id={}, event={}", eventId, userId, updateEventRequest);
         return eventService.updateUserEvent(userId, eventId, updateEventRequest);
+    }
+
+    @PatchMapping("/like/events/{eventId}/users/{userId}")
+    public EventShortDTO addLike(
+            @PathVariable Integer eventId,
+            @PathVariable Integer userId
+    ) {
+        log.info("Add like for eventId={} and userId={}", eventId, userId);
+        return eventService.addLike(eventId, userId);
+    }
+
+    @PatchMapping("/dislike/events/{eventId}/users/{userId}")
+    public EventShortDTO addDislike(
+            @PathVariable Integer eventId,
+            @PathVariable Integer userId
+    ) {
+        return eventService.addDislike(eventId, userId);
     }
 
     //Admin Endpoints

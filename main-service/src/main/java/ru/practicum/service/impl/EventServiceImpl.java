@@ -12,13 +12,12 @@ import ru.practicum.exception.exceptions.ConflictException;
 import ru.practicum.exception.exceptions.NotFoundException;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
+import ru.practicum.model.Rating;
 import ru.practicum.model.User;
+import ru.practicum.model.enums.LikeType;
 import ru.practicum.model.enums.State;
 import ru.practicum.model.enums.StateAction;
-import ru.practicum.repository.CategoryRepository;
-import ru.practicum.repository.EventRepository;
-import ru.practicum.repository.RequestRepository;
-import ru.practicum.repository.UserRepository;
+import ru.practicum.repository.*;
 import ru.practicum.service.EventService;
 import ru.practicum.utils.Constants;
 import ru.practicum.utils.mapper.EventMapper;
@@ -27,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -38,6 +38,7 @@ public class EventServiceImpl implements EventService {
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final RatingRepository ratingRepository;
 
     @Override
     public List<EventShortDTO> getEvents(
@@ -69,11 +70,17 @@ public class EventServiceImpl implements EventService {
                 .map(event -> EventMapper.mapToShort(event, requestRepository.countAllByEventId(event.getId())))
                 .toList();
 
-        if (Objects.nonNull(sort) && sort.equals("EVENT_DATE")) {
-            return events.stream().sorted(Comparator.comparing(EventShortDTO::getEventDate)).collect(toList());
-        } else {
-            return events.stream().sorted(Comparator.comparing(EventShortDTO::getViews)).collect(toList());
+        if (Objects.nonNull(sort)) {
+            if (sort.equals("EVENT_DATE")) {
+                return events.stream().sorted(Comparator.comparing(EventShortDTO::getEventDate)).collect(toList());
+            } else if (sort.equals("VIEWS")) {
+                return events.stream().sorted(Comparator.comparing(EventShortDTO::getViews)).collect(toList());
+            } else {
+                return events.stream().sorted(Comparator.comparingInt(eventShortDTO -> -eventShortDTO.getRating().getLikes())).collect(toList());
+            }
         }
+
+        return events;
     }
 
     @Override
@@ -163,6 +170,66 @@ public class EventServiceImpl implements EventService {
         }
 
         return EventMapper.mapToFull(eventRepository.save(event), requestRepository.countAllByEventId(eventId));
+    }
+
+    @Override
+    public EventShortDTO addLike(Integer eventId, Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(String.format("User with id={} was not found", userId)));
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException(String.format("Event with id={} was not found", userId)));
+
+        Optional<Rating> rating = ratingRepository.findRatingByEventIdAndUserId(eventId, userId);
+
+        if (rating.isEmpty()) {
+            ratingRepository.save(new Rating(event, user, LikeType.LIKE));
+
+            event.setLikes(event.getLikes() + 1);
+        } else {
+            if (rating.get().getLikeType().equals(LikeType.LIKE)) {
+                ratingRepository.delete(rating.get());
+
+                event.setLikes(event.getLikes() - 1);
+            } else {
+                rating.get().setLikeType(LikeType.LIKE);
+                ratingRepository.save(rating.get());
+
+                event.setLikes(event.getLikes() + 1);
+                event.setDislikes(event.getDislikes() - 1);
+            }
+        }
+
+        return EventMapper.mapToShort(eventRepository.save(event), requestRepository.countAllByEventId(eventId));
+    }
+
+    @Override
+    public EventShortDTO addDislike(Integer eventId, Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(String.format("User with id={} was not found", userId)));
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException(String.format("Event with id={} was not found", userId)));
+
+        Optional<Rating> rating = ratingRepository.findRatingByEventIdAndUserId(eventId, userId);
+
+        if (rating.isEmpty()) {
+            ratingRepository.save(new Rating(event, user, LikeType.DISLIKE));
+
+            event.setDislikes(event.getDislikes() + 1);
+        } else {
+            if (rating.get().getLikeType().equals(LikeType.DISLIKE)) {
+                ratingRepository.delete(rating.get());
+
+                event.setDislikes(event.getDislikes() - 1);
+            } else {
+                rating.get().setLikeType(LikeType.DISLIKE);
+                ratingRepository.save(rating.get());
+
+                event.setLikes(event.getLikes() - 1);
+                event.setDislikes(event.getDislikes() + 1);
+            }
+        }
+
+        return EventMapper.mapToShort(eventRepository.save(event), requestRepository.countAllByEventId(eventId));
     }
 
     @Override

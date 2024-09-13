@@ -32,6 +32,10 @@ public interface EventService {
 
     EventFullDTO updateUserEvent(Integer userId, Integer eventId, UpdateEventRequest update);
 
+    EventShortDTO addLike(Integer eventId, Integer userId);
+
+    EventShortDTO addDislike(Integer eventId, Integer userId);
+
     List<EventFullDTO> adminGetEvents(List<Integer> users,
                                       List<State> states,
                                       List<Integer> categories,

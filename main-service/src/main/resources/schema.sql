@@ -1,4 +1,4 @@
-drop table if exists users, categories, compilation, events, event_compilations, requests  cascade;
+drop table if exists users, categories, compilation, events, event_compilations, requests, ratings cascade;
 
 create table if not exists users (
     id      integer generated always as identity not null,
@@ -42,6 +42,8 @@ create table if not exists events (
     initiator_id       integer not null,
     category_id        integer not null,
     views              integer,
+    like_count         integer not null,
+    dislike_count      integer not null,
 
     constraint pk_event primary key (id),
     constraint fk_event_user
@@ -54,8 +56,7 @@ create table if not exists events (
             on delete cascade
 );
 
-create table if not exists event_compilations
-(
+create table if not exists event_compilations (
     id             integer generated always as identity not null,
     compilation_id integer not null,
     event_id       integer not null,
@@ -86,5 +87,22 @@ create table if not exists requests (
     constraint fk_request_event
         foreign key (event_id)
             references events (id)
+            on delete cascade
+);
+
+create table if not exists ratings (
+    id integer generated always as identity not null,
+    event_id integer not null,
+    user_id integer not null,
+    like_type varchar(10),
+
+    constraint pk_ratings primary key (id),
+    constraint fk_event_id
+        foreign key (event_id)
+            references events (id)
+            on delete cascade,
+    constraint fk_user_id
+        foreign key (user_id)
+            references users (id)
             on delete cascade
 );

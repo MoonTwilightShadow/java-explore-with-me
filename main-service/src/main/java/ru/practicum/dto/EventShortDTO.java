@@ -17,4 +17,5 @@ public class EventShortDTO {
     private UserShortDTO initiator;
     private Integer confirmedRequests;
     private Integer views;
+    private RatingDTO rating;
 }
