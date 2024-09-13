@@ -1050,11 +1050,6 @@
 			"type": "string"
 		},
 		{
-			"key": "response",
-			"value": "",
-			"type": "string"
-		},
-		{
 			"key": "catId",
 			"value": "1",
 			"type": "string"
@@ -1063,6 +1058,10 @@
 			"key": "source",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "response",
+			"value": ""
 		}
 	]
 }
