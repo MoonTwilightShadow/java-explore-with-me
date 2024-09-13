@@ -19,6 +19,8 @@
 							"    pm.response.to.be.json;\r",
 							"});\r",
 							"\r",
+							"console.log(pm.collectionVariables.get('response'))\r",
+							"\r",
 							"const source = pm.collectionVariables.get('response');\r",
 							"const target = pm.response.json();\r",
 							"\r",
@@ -88,7 +90,7 @@
 							"        event = await api.publishEvent(event.id);\r",
 							"\r",
 							"        pm.collectionVariables.set(\"e1id\", event.id);\r",
-							"        pm.collectionVariables.set('response', event);\r",
+							"        pm.collectionVariables.set(\"response\", event);\r",
 							"\r",
 							"        const user2 = await api.addUser(rnd.getUser());\r",
 							"        pm.collectionVariables.set(\"u1id\", user2.id);\r",
@@ -1056,6 +1058,11 @@
 		{
 			"key": "catId",
 			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "source",
+			"value": "",
 			"type": "string"
 		}
 	]
