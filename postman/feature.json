@@ -1006,12 +1006,12 @@
 		{
 			"key": "e1id",
 			"value": "1",
-			"type": "string"
+			"type": "number"
 		},
 		{
 			"key": "e2id",
 			"value": "2",
-			"type": "string"
+			"type": "number"
 		},
 		{
 			"key": "baseUrl",
