@@ -42,7 +42,7 @@ public class EventController {
     }
 
     @GetMapping("/events/{id}")
-    public EventFullDTO getEvent(@PathVariable(value = "id") Integer id, HttpServletRequest request) {
+    public EventFullDTO getEvent(@PathVariable Integer id, HttpServletRequest request) {
         log.info("Get event with id={}. Ip={}, URI={}", id, request.getRemoteAddr(), request.getRequestURI());
         return eventService.getEvent(id, request.getRemoteAddr());
     }
@@ -50,7 +50,7 @@ public class EventController {
     //Private Endpoints
     @GetMapping("/users/{userId}/events")
     public List<EventShortDTO> getUserEvents(
-            @PathVariable(value = "userId") Integer userId,
+            @PathVariable Integer userId,
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size) {
         log.info("Get events with owner id={} from={} size={}", userId, from, size);
@@ -68,8 +68,8 @@ public class EventController {
 
     @GetMapping("/users/{userId}/events/{eventId}")
     public EventFullDTO getUserEvent(
-            @PathVariable(value = "userId") Integer userId,
-            @PathVariable(value = "eventId") Integer eventId
+            @PathVariable Integer userId,
+            @PathVariable Integer eventId
     ) {
         log.info("Get event with id={} and user with id={}", eventId, userId);
         return eventService.getUserEvent(userId, eventId);
