@@ -40,6 +40,10 @@ public class Event {
     @ManyToOne(fetch = FetchType.LAZY)
     private User initiator;
     private Integer views;
+    @Column(name = "like_count")
+    private Integer likes;
+    @Column(name = "dislike_count")
+    private Integer dislikes;
 
     public Event(
             String title,
@@ -63,5 +67,7 @@ public class Event {
         this.lat = lat;
         this.lon = lon;
         this.views = 0;
+        this.likes = 0;
+        this.dislikes = 0;
     }
 }

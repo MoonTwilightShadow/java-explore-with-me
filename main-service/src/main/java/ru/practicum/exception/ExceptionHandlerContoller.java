@@ -106,7 +106,7 @@ public class ExceptionHandlerContoller {
         return ApiError.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .reason("(--)")
-                .message(e.getClass().getSimpleName())
+                .message(e.getMessage())
                 .time(LocalDateTime.now().format(Constants.DATE_TIME_FORMATTER))
                 .build();
     }

@@ -20,16 +20,18 @@ public class RequestController {
 
     //Private Endpoint
     @GetMapping("/users/{userId}/events/{eventId}/requests")
-    public List<ParticipationRequestDTO> getRequestsUserForEvent(@PathVariable Integer userId,
-                                                                 @PathVariable Integer eventId) {
+    public List<ParticipationRequestDTO> getRequestsUserForEvent(
+            @PathVariable Integer userId,
+            @PathVariable Integer eventId) {
         log.info("Get participation requests for user with id={} on event with id={}", userId, eventId);
         return requestService.getRequestsUserForEvent(userId, eventId);
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}/requests")
-    public EventRequestStatusUpdateResult updateStateOfRequests(@PathVariable Integer userId,
-                                                                      @PathVariable Integer eventId,
-                                                                      @Valid @RequestBody EventRequestStatusUpdateRequest statusUpdate) {
+    public EventRequestStatusUpdateResult updateStateOfRequests(
+            @PathVariable Integer userId,
+            @PathVariable Integer eventId,
+            @Valid @RequestBody EventRequestStatusUpdateRequest statusUpdate) {
         log.info("Update event request status for event with id={} and user with id={} request={}", userId, eventId, statusUpdate);
         return requestService.updateStateOfRequests(userId, eventId, statusUpdate);
     }

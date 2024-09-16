@@ -20,7 +20,7 @@ public class UserController {
     //Admin Enpoints
     @GetMapping("/admin/users")
     public List<UserDTO> getUsers(
-            @RequestParam(name = "ids", required = false) List<Integer> ids,
+            @RequestParam(required = false) List<Integer> ids,
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size) {
         log.info("Get users by ids={}, from={}, size={}", ids, from, size);

@@ -1,9 +1,6 @@
 package ru.practicum.utils.mapper;
 
-import ru.practicum.dto.EventFullDTO;
-import ru.practicum.dto.EventShortDTO;
-import ru.practicum.dto.Location;
-import ru.practicum.dto.NewEventDTO;
+import ru.practicum.dto.*;
 import ru.practicum.model.Event;
 import ru.practicum.utils.Constants;
 
@@ -18,7 +15,8 @@ public class EventMapper {
                 event.getPaid(),
                 UserMapper.mapToShort(event.getInitiator()),
                 confirmedRequests,
-                event.getViews()
+                event.getViews(),
+                new RatingDTO(event.getLikes(), event.getDislikes())
         );
     }
 
@@ -39,7 +37,8 @@ public class EventMapper {
                 confirmedRequests,
                 event.getModeration(),
                 event.getState(),
-                event.getViews()
+                event.getViews(),
+                new RatingDTO(event.getLikes(), event.getDislikes())
         );
     }
 

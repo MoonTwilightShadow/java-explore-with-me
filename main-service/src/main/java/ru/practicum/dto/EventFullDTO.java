@@ -40,4 +40,5 @@ public class EventFullDTO {
     private Boolean requestModeration;
     private State state;
     private Integer views;
+    private RatingDTO rating;
 }
